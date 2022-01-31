@@ -17,6 +17,17 @@ dependencies {
     implementation "org.springframework.kafka:spring-kafka:2.8.2"
     implementation "org.springframework.boot:spring-boot-starter-test:2.6.3"
 
+    implementation "org.postgresql:postgresql:42.3.1"
+
+    def hibernateVersion = '5.6.4.Final'
+    implementation "org.hibernate:hibernate-core:${hibernateVersion}"
+    implementation "org.hibernate:hibernate-entitymanager:${hibernateVersion}"
+    /* connection pooling for Hibernate/JDBC */
+    implementation "org.hibernate:hibernate-c3p0:${hibernateVersion}"
+    implementation 'com.mchange:c3p0:0.9.5.5'
+
+    compileOnly "org.projectlombok:lombok:1.18.22"
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
