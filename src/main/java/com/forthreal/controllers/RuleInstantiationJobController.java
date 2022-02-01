@@ -20,12 +20,14 @@ public class RuleInstantiationJobController {
     @Lazy @Autowired
     private JobScheduler jobScheduler;
 
+    /*
     @PostConstruct
     @Job(name = "firstJob")
     public void executeFirstJob()
     {
         var futureTime = LocalDateTime.now().plus(5, ChronoUnit.SECONDS).atZone(ZoneId.of("Europe/Kiev"));
-        jobScheduler.schedule(futureTime, () -> { System.out.println("Pryvit"); });
+        jobScheduler.schedule(futureTime, () -> System.out.println("Pryvit"));
     }
+     */
 
 }

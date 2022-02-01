@@ -10,7 +10,10 @@ repositories {
 }
 
 dependencies {
+    implementation("org.springframework.data:spring-data-jpa:2.6.1")
+
     implementation("org.springframework.boot:spring-boot-starter:2.6.3")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.6.3")
     implementation("org.jobrunr:jobrunr-spring-boot-starter:4.0.7") {
         exclude(module:"spring-boot-starter")
     }
@@ -27,6 +30,7 @@ dependencies {
     implementation 'com.mchange:c3p0:0.9.5.5'
 
     compileOnly "org.projectlombok:lombok:1.18.22"
+    annotationProcessor "org.projectlombok:lombok:1.18.22"
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
