@@ -8,6 +8,7 @@ import org.jobrunr.storage.StorageProviderUtils;
 import org.jobrunr.storage.sql.common.DefaultSqlStorageProvider;
 import org.jobrunr.storage.sql.common.db.dialect.AnsiDialect;
 import org.jobrunr.utils.mapper.jackson.JacksonJsonMapper;
+import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.ApplicationContext;
@@ -24,17 +25,17 @@ public class ApplicationSettings {
     }
 
     @Bean
+    @DependsOn("jobMapper")
     public DataSource dataSource() {
-        var builder = DataSourceBuilder.create();
-        builder.driverClassName("org.postgresql.Driver");
-        builder.url("jdbc:postgresql://192.168.31.52/testdatabase");
-        builder.username("testuser");
-        builder.password("simplemagic");
-        return builder.build();
+        var dataSource = new PGSimpleDataSource();
+        dataSource.setUrl("jdbc:postgresql://192.168.31.52/testdatabase");
+        dataSource.setUser("testuser");
+        dataSource.setPassword("simplemagic");
+        return dataSource;
     }
 
     @Bean
-    @DependsOn("jobMapper")
+    @DependsOn("dataSource")
     public StorageProvider storageProvider(JobMapper jobMapper, DataSource dataSource) {
         return new DefaultSqlStorageProvider(dataSource, new AnsiDialect(), StorageProviderUtils.DatabaseOptions.CREATE);
     }
@@ -47,9 +48,10 @@ public class ApplicationSettings {
                 .configure()
                 .useJobActivator(applicationContext::getBean)
                 .useStorageProvider(provider)
-                .useDashboard()
+                .useDashboard(8080)
                 .useBackgroundJobServer()
                 .initialize()
                 .getJobScheduler();
     }
+
 }
