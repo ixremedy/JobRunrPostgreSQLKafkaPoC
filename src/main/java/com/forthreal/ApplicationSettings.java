@@ -11,18 +11,15 @@ import org.jobrunr.storage.sql.common.DefaultSqlStorageProvider;
 import org.jobrunr.storage.sql.common.db.dialect.AnsiDialect;
 import org.jobrunr.utils.mapper.jackson.JacksonJsonMapper;
 import org.postgresql.ds.PGSimpleDataSource;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import javax.sql.DataSource;
 
 @Configuration
-@EnableJpaRepositories
 public class ApplicationSettings {
     @Bean
     public JobMapper jobMapper()
@@ -34,7 +31,7 @@ public class ApplicationSettings {
     @DependsOn("jobMapper")
     public DataSource dataSource() {
         var dataSource = new PGSimpleDataSource();
-        dataSource.setUrl("jdbc:postgresql://192.168.31.52/testdatabase");
+        dataSource.setUrl("jdbc:postgresql://127.0.0.1/testdatabase");
         dataSource.setUser("testuser");
         dataSource.setPassword("simplemagic");
         return dataSource;
@@ -48,11 +45,10 @@ public class ApplicationSettings {
 
     @Bean(name = "JobScheduler")
     @DependsOn("storageProvider")
-    public JobScheduler initJobScheduler(StorageProvider provider, ApplicationContext applicationContext)
+    public JobScheduler initJobScheduler(StorageProvider provider)
     {
         return JobRunr
                 .configure()
-                .useJobActivator(applicationContext::getBean)
                 .useStorageProvider(provider)
                 .useDashboard(8080)
                 .useBackgroundJobServer()
