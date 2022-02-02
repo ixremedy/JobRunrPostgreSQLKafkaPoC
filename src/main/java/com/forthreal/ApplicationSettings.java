@@ -15,8 +15,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
 import javax.sql.DataSource;
 
 @Configuration
@@ -70,6 +72,14 @@ public class ApplicationSettings {
         entityManagerFactoryBean.setJpaVendorAdapter(hibernateVendorAdapter);
 
         return entityManagerFactoryBean;
+    }
+
+    @Bean
+    public PlatformTransactionManager transactionManager()
+    {
+        var transactionManager = new JpaTransactionManager();
+        transactionManager.setEntityManagerFactory(entityManagerFactory(dataSource()).getObject());
+        return transactionManager;
     }
 
     @Lazy
