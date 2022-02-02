@@ -21,4 +21,6 @@ public class Rule {
 
     @Column(name = "day_number")
     private Integer dayNumber;
+
+    private String description;
 }
