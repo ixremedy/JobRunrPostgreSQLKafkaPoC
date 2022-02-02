@@ -12,6 +12,14 @@ import java.sql.Time;
 @RequiredArgsConstructor
 @Table(name = "rule")
 public class Rule {
+
+    public Rule(Time launchTime, Integer dayNumber, String description)
+    {
+        this.launchTime = launchTime;
+        this.dayNumber = dayNumber;
+        this.description = description;
+    }
+
     @Id
     @GeneratedValue
     private Long id;
