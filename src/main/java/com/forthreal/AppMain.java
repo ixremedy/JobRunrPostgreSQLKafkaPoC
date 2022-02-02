@@ -3,19 +3,19 @@ package com.forthreal;
 import com.forthreal.services.JobRetriever;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
+@EnableJpaRepositories
 public class AppMain {
+
     public static void main(String[] args)
     {
-        var appFactory = new AnnotationConfigApplicationContext(ApplicationSettings.class);
         var app = new SpringApplication(AppMain.class);
 
-        app.run(args);
+        var applicationContext = app.run(args);
 
-        var jobRetriever = appFactory.getBean(JobRetriever.class);
-
+        var jobRetriever = applicationContext.getBean(JobRetriever.class);
         jobRetriever.enqueueFromDb();
     }
 
