@@ -28,7 +28,7 @@ public class SchedulingTests {
 
     @Test
     @Order(0)
-    @DisplayName("check if we can insert new rules when they don't exist")
+    @DisplayName("check if we can insert new rules")
     public void ruleInsertionTest()
     {
         var dayNumber = LocalDate.now().getDayOfMonth();
@@ -37,10 +37,23 @@ public class SchedulingTests {
         var rule1 = new Rule(time1, dayNumber, "First rule");
         var rule2 = new Rule(time1, dayNumber, "Second rule");
         var rule3 = new Rule(time1, dayNumber, "Third rule");
+        var rule4 = new Rule(time1, dayNumber, "Fourth rule");
+        var rule5 = new Rule(time1, dayNumber, "Fifth rule");
 
         assertTrue(ruleRepository.saveAndFlush(rule1) != null
                         && ruleRepository.saveAndFlush(rule2) != null
                         && ruleRepository.saveAndFlush(rule3) != null
+                        && ruleRepository.saveAndFlush(rule4) != null
+                        && ruleRepository.saveAndFlush(rule5) != null
                       );
     }
+
+    @Test
+    @Order(1)
+    @DisplayName("check if we can can enqueue the new rule related jobs")
+    public void enqueueRuleJobsTest()
+    {
+        assertEquals(5, jobRetriever.enqueueFromDb());
+    }
+
 }
