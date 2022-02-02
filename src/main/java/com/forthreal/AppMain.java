@@ -16,7 +16,7 @@ public class AppMain {
         var applicationContext = app.run(args);
 
         var jobRetriever = applicationContext.getBean(JobRetriever.class);
-        jobRetriever.enqueueFromDb();
+        var count = jobRetriever.enqueueFromDb();
     }
 
 }
