@@ -62,7 +62,13 @@ public class ApplicationSettings {
         var entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactoryBean.setDataSource(dataSource);
         entityManagerFactoryBean.setPackagesToScan("com.forthreal");
-        entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        entityManagerFactoryBean.setPersistenceUnitName("Postgresql");
+
+        var hibernateVendorAdapter = new HibernateJpaVendorAdapter();
+        /* make sure to automatically create tables */
+        hibernateVendorAdapter.setGenerateDdl(true);
+        entityManagerFactoryBean.setJpaVendorAdapter(hibernateVendorAdapter);
+
         return entityManagerFactoryBean;
     }
 
