@@ -19,6 +19,8 @@ dependencies {
         exclude(module:"hibernate-core")
     }
     implementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
+    implementation "org.springframework.boot:spring-boot-starter-data-redis:$springBootVersion"
+    implementation "redis.clients:jedis:3.8.0"
 
     implementation "org.springframework.kafka:spring-kafka:2.8.2"
 
