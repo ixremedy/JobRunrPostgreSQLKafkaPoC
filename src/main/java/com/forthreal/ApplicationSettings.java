@@ -1,10 +1,8 @@
 package com.forthreal;
 
-import com.forthreal.handlers.RuleInsertionJobHandler;
 import com.forthreal.repository.IRuleRepository;
 import com.forthreal.services.JobRetriever;
 import org.jobrunr.configuration.JobRunr;
-import org.jobrunr.jobs.mappers.JobMapper;
 import org.jobrunr.scheduling.JobScheduler;
 import org.jobrunr.storage.StorageProvider;
 import org.jobrunr.storage.StorageProviderUtils;
@@ -41,23 +39,17 @@ public class ApplicationSettings {
         return new DefaultSqlStorageProvider(dataSource, new AnsiDialect(), StorageProviderUtils.DatabaseOptions.CREATE);
     }
 
-    @Bean
-    public RuleInsertionJobHandler ruleInsertionJobHandler()
-    {
-        return new RuleInsertionJobHandler();
-    }
-
     @Bean(name = "JobScheduler")
     @DependsOn("storageProvider")
     public JobScheduler initJobScheduler(StorageProvider provider, ApplicationContext applicationContext)
     {
         return JobRunr
                 .configure()
+                .useJsonMapper(new JacksonJsonMapper())
                 .useJobActivator(applicationContext::getBean)
                 .useStorageProvider(provider)
                 .useDashboard(8080)
                 .useBackgroundJobServer()
-                .useJsonMapper(new JacksonJsonMapper())
                 .initialize()
                 .getJobScheduler();
     }
