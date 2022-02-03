@@ -28,10 +28,7 @@ public class JobRetriever {
                     var hours = time.getHours();
                     var minutes = time.getMinutes();
                     var localDateTime = LocalDateTime.now().withHour(hours).withMinute(minutes);
-                    return jobScheduler.schedule(localDateTime, () -> {
-                        System.out.println("Processing: " + rule.getDescription());
-                        kafkaTemplate.send("incomingRule", "message", rule.getDescription());
-                    } );
+                    return jobScheduler.schedule(localDateTime, () -> kafkaTemplate.send("incomingRule", "message", rule.getDescription()));
                 } )
                 .map( id -> {
                     logger.warn("{} jobId {}", currentThread().getStackTrace()[1].getMethodName(), id);
