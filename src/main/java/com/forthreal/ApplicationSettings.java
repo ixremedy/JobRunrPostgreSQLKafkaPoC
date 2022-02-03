@@ -3,6 +3,9 @@ package com.forthreal;
 import com.forthreal.repository.IRuleRepository;
 import com.forthreal.services.JobRetriever;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.jobrunr.configuration.JobRunr;
 import org.jobrunr.scheduling.JobScheduler;
 import org.jobrunr.storage.StorageProvider;
@@ -21,13 +24,16 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.kafka.core.DefaultKafkaProducerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import redis.clients.jedis.JedisPool;
-
 import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 public class ApplicationSettings {
@@ -115,6 +121,7 @@ public class ApplicationSettings {
         return entityManagerFactoryBean;
     }
 
+    /** Will be used by Hibernate **/
     @Bean
     @DependsOn("pgDataSource")
     public PlatformTransactionManager transactionManager()
@@ -124,10 +131,34 @@ public class ApplicationSettings {
         return transactionManager;
     }
 
+    /** retriever of prepared rules from the DB */
     @Lazy
     @Bean
-    public JobRetriever jobRetriever(IRuleRepository ruleRepository, JobScheduler jobScheduler)
+    public JobRetriever jobRetriever(IRuleRepository ruleRepository, JobScheduler jobScheduler, KafkaTemplate<String,String> kafkaTemplate)
     {
-        return new JobRetriever(ruleRepository, jobScheduler);
+        return new JobRetriever(ruleRepository, jobScheduler, kafkaTemplate);
+    }
+
+    /** Kafka related **/
+    final private Map<String, Object> configProperties =
+            new HashMap<>() {{
+                put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,"127.0.0.1:9092");
+                put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+                put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+            }};
+
+    private DefaultKafkaProducerFactory<String,String> factory =
+              new DefaultKafkaProducerFactory<>(configProperties);
+
+    @Bean
+    public Producer<String,String> kafkaProducer()
+    {
+        return factory.createProducer();
+    }
+
+    @Bean
+    public KafkaTemplate<String,String> kafkaTemplate()
+    {
+        return new KafkaTemplate<>(factory);
     }
 }

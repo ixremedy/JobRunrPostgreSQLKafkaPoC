@@ -4,15 +4,16 @@ import com.forthreal.repository.IRuleRepository;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.jobrunr.scheduling.JobScheduler;
+import org.springframework.kafka.core.KafkaTemplate;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 import static java.lang.Thread.currentThread;
 
 @AllArgsConstructor()
 public class JobRetriever {
     private IRuleRepository ruleRepository;
     private JobScheduler jobScheduler;
+    private KafkaTemplate<String,String> kafkaTemplate;
 
     public long enqueueFromDb()
     {
@@ -27,7 +28,10 @@ public class JobRetriever {
                     var hours = time.getHours();
                     var minutes = time.getMinutes();
                     var localDateTime = LocalDateTime.now().withHour(hours).withMinute(minutes);
-                    return jobScheduler.schedule(localDateTime, () -> System.out.println("Hello, world!") );
+                    return jobScheduler.schedule(localDateTime, () -> {
+                        System.out.println("Processing: " + rule.getDescription());
+                        kafkaTemplate.send("incomingRule", "message", rule.getDescription());
+                    } );
                 } )
                 .map( id -> {
                     logger.warn("{} jobId {}", currentThread().getStackTrace()[1].getMethodName(), id);
