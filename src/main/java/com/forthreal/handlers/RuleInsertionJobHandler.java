@@ -8,7 +8,6 @@ import org.jobrunr.jobs.lambdas.JobRequestHandler;
 import org.springframework.stereotype.Component;
 import static java.lang.Thread.currentThread;
 
-@Component
 public class RuleInsertionJobHandler implements JobRequestHandler<RuleInsertionJob> {
     private Logger logger = LogManager.getLogger(RuleInsertionJobHandler.class);
 
