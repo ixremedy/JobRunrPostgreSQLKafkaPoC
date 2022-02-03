@@ -14,16 +14,27 @@ dependencies {
 
     def springBootVersion = "2.6.3"
     implementation("org.springframework.boot:spring-boot-starter:$springBootVersion")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion") {
+        exclude(module:"hibernate-core")
+    }
     implementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
 
     implementation "org.springframework.kafka:spring-kafka:2.8.2"
 
     implementation("org.jobrunr:jobrunr-spring-boot-starter:4.0.7") {
         exclude(module:"spring-boot-starter")
+        exclude(module:"hibernate-core")
+        exclude(module:"hibernate-entitymanager")
+        exclude(module:"hibernate-c3p0")
     }
 
     implementation "org.postgresql:postgresql:42.3.1"
+
+    def hibernateVersion = '5.6.4.Final'
+    implementation "org.hibernate:hibernate-core:${hibernateVersion}"
+    implementation "org.hibernate:hibernate-entitymanager:${hibernateVersion}"
+    /* connection pooling for Hibernate/JDBC */
+    implementation "org.hibernate:hibernate-c3p0:${hibernateVersion}"
 
     def lombokVersion = "1.18.22"
     compileOnly "org.projectlombok:lombok:$lombokVersion"
