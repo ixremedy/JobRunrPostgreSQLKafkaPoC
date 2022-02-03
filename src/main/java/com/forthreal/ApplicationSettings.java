@@ -68,9 +68,9 @@ public class ApplicationSettings {
 
     /*
     @Bean
-    @DependsOn("dataSource")
-    public StorageProvider storageProvider(DataSource dataSource) {
-        return new DefaultSqlStorageProvider(dataSource, new AnsiDialect(), StorageProviderUtils.DatabaseOptions.CREATE);
+    @DependsOn("pgDataSource")
+    public StorageProvider storageProvider() {
+        return new DefaultSqlStorageProvider(pgDataSource(), new AnsiDialect(), StorageProviderUtils.DatabaseOptions.CREATE);
     }*/
 
     @Bean
