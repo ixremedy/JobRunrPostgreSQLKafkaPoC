@@ -26,6 +26,7 @@ dependencies {
         exclude(module:"hibernate-core")
         exclude(module:"hibernate-entitymanager")
         exclude(module:"hibernate-c3p0")
+        exclude(module:"c3p0")
     }
 
     implementation "org.postgresql:postgresql:42.3.1"
