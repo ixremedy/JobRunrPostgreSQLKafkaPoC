@@ -134,9 +134,13 @@ public class ApplicationSettings {
     /** retriever of prepared rules from the DB */
     @Lazy
     @Bean
-    public JobRetriever jobRetriever(IRuleRepository ruleRepository, JobScheduler jobScheduler, KafkaTemplate<String,String> kafkaTemplate)
+    public JobRetriever jobRetriever(IRuleRepository ruleRepository,
+                                     JobScheduler jobScheduler,
+                                     KafkaTemplate<String,String> kafkaTemplate,
+                                     StorageProvider storageProvider
+                                   )
     {
-        return new JobRetriever(ruleRepository, jobScheduler, kafkaTemplate);
+        return new JobRetriever(ruleRepository, jobScheduler, kafkaTemplate, storageProvider);
     }
 
     /** Kafka related **/

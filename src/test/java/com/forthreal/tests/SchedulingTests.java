@@ -13,6 +13,8 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = ApplicationSettings.class)
@@ -52,6 +54,25 @@ public class SchedulingTests {
     public void enqueueRuleJobsTest()
     {
         assertEquals(5, jobRetriever.enqueueFromDb());
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("check if we can schedule a job with a custom ID")
+    public void enqueueRuleJobWithCustomID() {
+        var id = UUID.randomUUID();
+        var scheduledSuccessfully = jobRetriever.enqueueSampleRuleWithCustomId(id);
+        assertTrue(scheduledSuccessfully);
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("check if we can reschedule a job with a custom ID")
+    public void rescheduleRuleJobWithCustomID() {
+        var id = UUID.randomUUID();
+        var scheduledSuccessfully = jobRetriever.enqueueSampleRuleWithCustomId(id);
+        var rescheduledSuccessfully = jobRetriever.rescheduleSampleRuleWithCustomId(id, "rescheduled task " + id);
+        assertTrue(scheduledSuccessfully && rescheduledSuccessfully);
     }
 
 }
