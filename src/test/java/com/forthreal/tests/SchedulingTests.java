@@ -11,9 +11,12 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -75,4 +78,28 @@ public class SchedulingTests {
         assertTrue(scheduledSuccessfully && rescheduledSuccessfully);
     }
 
+    @Test
+    @Order(4)
+    @DisplayName("massive setting of jobs")
+    public void massiveRuleJobScheduling() {
+        var numBatches = 1_000;
+        var numRecords = 500;
+
+        var localDateTime = LocalDateTime.now().plusMinutes(5);
+
+        mainLoop:
+        for(int i = 0; i < numBatches; i++)
+        {
+            for(int j = 0; j < numRecords; j++)
+            {
+                var newTime = localDateTime.plusSeconds(5);
+
+                if(! jobRetriever.enqueueSampleRule(newTime) )
+                {
+                    Assertions.fail();
+                    break mainLoop;
+                }
+            }
+        }
+    }
 }

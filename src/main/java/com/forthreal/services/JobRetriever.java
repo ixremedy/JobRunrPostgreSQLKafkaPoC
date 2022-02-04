@@ -19,6 +19,7 @@ public class JobRetriever {
     private KafkaTemplate<String,String> kafkaTemplate;
     private StorageProvider storageProvider;
 
+    /** to see how task rescheduling works given you need to preserve the same ID **/
     public boolean rescheduleSampleRuleWithCustomId(UUID taskId, String newTaskName)
     {
         var logger = LogManager.getLogger(JobRetriever.class);
@@ -36,9 +37,10 @@ public class JobRetriever {
                           () -> kafkaTemplate.send("incomingRule", "message", newTaskName)
                         )
                         .asUUID()
-                        .compareTo(taskId) == 0;
+                        .compareTo(taskId) == 0; /* ensure ID is preserved */
     }
 
+    /** to see how task scheduling works store a task with a particular ID **/
     public boolean enqueueSampleRuleWithCustomId(UUID taskId)
     {
         var logger = LogManager.getLogger(JobRetriever.class);
@@ -53,9 +55,19 @@ public class JobRetriever {
                                 () -> kafkaTemplate.send("incomingRule", "message", "custom ID task " + taskId)
                               )
                            .asUUID()
-                           .compareTo(taskId) == 0;
+                           .compareTo(taskId) == 0; /* ensure ID is preserved */
     }
 
+    /** this will be used for massive queueing to see how the system handles severe load **/
+    public boolean enqueueSampleRule(LocalDateTime time)
+    {
+        return jobScheduler.schedule(
+                        time,
+                        () -> System.out.print("_")
+                ) != null;
+    }
+
+    /** enqueue tasks for today, take them from the relational DB for the current day **/
     public long enqueueFromDb()
     {
         var dayNumber = LocalDate.now().getDayOfMonth();
